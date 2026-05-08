@@ -104,14 +104,39 @@ const errorMessage = document.getElementById("error-message");
 const gaaLabel = document.getElementById("label-gaa");
 const historyList = document.getElementById("history-list");
 const clearHistoryBtn = document.getElementById("clear-history-btn");
+const formulaDisplay = document.getElementById("formula-display");
+const formulaText = document.getElementById("formula-text");
 
 const HISTORY_KEY = "gradePredictor_history";
+
+// Formula reference
+const FORMULAS = {
+    "MLT": "T = min(0.05×GAA + max(0.6×F + 0.25×max(Qz1,Qz2), 0.4×F + 0.25×Qz1 + 0.3×Qz2) + Bonus, 100)",
+    "BDM": "T = 0.1×GA + 0.2×Qz1 + 0.2×Qz2 + 0.5×F",
+    "MAD2": "T = min(0.05×GAA + max(0.6×F + 0.25×max(Qz1,Qz2), 0.4×F + 0.25×Qz1 + 0.3×Qz2) + Bonus, 100)"
+};
 
 // Event Listeners
 subjectSelect.addEventListener("change", handleSubjectChange);
 calculateBtn.addEventListener("click", handleCalculate);
 resetBtn.addEventListener("click", handleReset);
 clearHistoryBtn.addEventListener("click", handleClearHistory);
+
+// Tab navigation
+const navLinks = document.querySelectorAll(".nav-link");
+const getStartedBtn = document.getElementById("get-started-btn");
+
+navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const tabName = link.getAttribute("data-tab");
+        switchTab(tabName);
+    });
+});
+
+getStartedBtn.addEventListener("click", () => {
+    switchTab("prediction");
+});
 
 // Initialize history on page load
 document.addEventListener("DOMContentLoaded", loadHistory);
@@ -123,12 +148,17 @@ function handleSubjectChange() {
         inputsContainer.style.display = "none";
         resultsContainer.style.display = "none";
         errorContainer.style.display = "none";
+        formulaDisplay.style.display = "none";
         return;
     }
 
     inputsContainer.style.display = "block";
     resultsContainer.style.display = "none";
     errorContainer.style.display = "none";
+    
+    // Display formula
+    formulaText.textContent = FORMULAS[subject];
+    formulaDisplay.style.display = "block";
 
     // Update labels based on subject
     if (subject === "BDM") {
@@ -272,6 +302,32 @@ function handleReset() {
     clearErrorMessages();
 }
 
+// Tab Navigation
+function switchTab(tabName) {
+    // Hide all pages
+    const allPages = document.querySelectorAll(".page");
+    allPages.forEach(page => {
+        page.classList.remove("active");
+    });
+
+    // Deactivate all nav links
+    navLinks.forEach(link => {
+        link.classList.remove("active");
+    });
+
+    // Show selected page
+    const selectedPage = document.getElementById(tabName);
+    if (selectedPage) {
+        selectedPage.classList.add("active");
+    }
+
+    // Activate selected nav link
+    const activeLink = document.querySelector(`[data-tab="${tabName}"]`);
+    if (activeLink) {
+        activeLink.classList.add("active");
+    }
+}
+
 // History Management Functions
 
 function saveToHistory(subject, gaaValue, qz1Value, qz2Value, bonusValue, gradeTable) {
@@ -352,12 +408,19 @@ function createHistoryItemElement(item) {
 
     container.appendChild(details);
 
-    // Result section - show first grade that can be achieved
+    // Result section - show first achievable grade (not N/A)
     if (item.gradeTable.length > 0) {
-        const firstGrade = item.gradeTable[0];
+        // Find first grade where minF is not N/A (i.e., actually achievable)
+        const achievableGrade = item.gradeTable.find(g => g.minF !== "N/A");
+        
         const result = document.createElement("div");
         result.className = "history-item-result";
-        result.innerHTML = `<label>Best possible grade</label><value>${firstGrade.grade} (needs F ≥ ${firstGrade.minF === "N/A" ? "N/A" : firstGrade.minF})</value>`;
+        
+        if (achievableGrade) {
+            result.innerHTML = `<label>Best possible grade</label><value>${achievableGrade.grade} (needs F ≥ ${achievableGrade.minF})</value>`;
+        } else {
+            result.innerHTML = `<label>Best possible grade</label><value>Cannot achieve any grade (E)</value>`;
+        }
         container.appendChild(result);
     }
 
