@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/GradePredictor/static/css/main.c4e10d00.css",
-    "main.js": "/GradePredictor/static/js/main.a21be5fe.js",
+    "main.js": "/GradePredictor/static/js/main.0fceafb5.js",
     "index.html": "/GradePredictor/index.html",
     "main.c4e10d00.css.map": "/GradePredictor/static/css/main.c4e10d00.css.map",
-    "main.a21be5fe.js.map": "/GradePredictor/static/js/main.a21be5fe.js.map"
+    "main.0fceafb5.js.map": "/GradePredictor/static/js/main.0fceafb5.js.map"
   },
   "entrypoints": [
     "static/css/main.c4e10d00.css",
-    "static/js/main.a21be5fe.js"
+    "static/js/main.0fceafb5.js"
   ]
 }
