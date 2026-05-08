@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/GradePredictor/static/css/main.29f67787.css",
+    "main.js": "/GradePredictor/static/js/main.a21be5fe.js",
+    "index.html": "/GradePredictor/index.html",
+    "main.29f67787.css.map": "/GradePredictor/static/css/main.29f67787.css.map",
+    "main.a21be5fe.js.map": "/GradePredictor/static/js/main.a21be5fe.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.29f67787.css",
+    "static/js/main.a21be5fe.js"
+  ]
+}
